@@ -1,22 +1,26 @@
-<h2>Hello Template</h2>
-<table>
-    <thead>
-        <tr>
-            <th>제목</th>
-            <th>작성일시</th>
-        </tr>
-    </thead>
-    <tbody>
-<!-- "th:" ThymeLeaf 템플릿 엔진이 사용하는 속성 -->
-    <tr th:each="question : ${questionList}">
-        <td>
-            <!-- URL 주소 나타낼 땐
-                "@{"와 "}" 사이에 입력해야 함 -->
-            <!-- 문자열과 자바 객체 합칠 땐
-            "|"와 "|" 기호로 좌우 감싸야 함 -->
-            <a th:href="@{|/question/detail/${question.id}|}" th:text="${question.subject}"></a>
-        </td>
-        <td th:text="${question.createDate}"></td>
-    </tr>
-    </tbody>
-</table>
+<link rel="stylesheet" type="text/css" th:href="@{/bootstrap.min.css}"/>
+<div class="container my-3">
+    <table class="table">
+        <thead class="table-dark">
+            <tr>
+                <th>번호</th>
+                <th>제목</th>
+                <th>작성일시</th>
+            </tr>
+        </thead>
+        <tbody>
+        <!-- "th:" ThymeLeaf 템플릿 엔진이 사용하는 속성 -->
+            <tr th:each="question, loop : ${questionList}">
+                <td th:text="${loop.count}"></td>
+                <td><!-- ㅁ URL 주소 나타낼 땐
+                     "@{"와 "}" 사이에 입력해야 함
+                        ㅁ 문자열과 자바 객체 합칠 땐
+                    "|"와 "|" 기호로 좌우 감싸야 함
+                --><a th:href="@{|/question/detail/${question.id}|}" th:text="${question.subject}"></a>
+                </td>
+                <!-- 날짜 객체를 날짜 포맷에 맞게 변환 -->
+                <td th:text="${#temporals.format(question.createDate, 'yyyy-MM-dd HH:mm')}"></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
