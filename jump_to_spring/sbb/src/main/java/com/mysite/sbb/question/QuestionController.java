@@ -1,8 +1,11 @@
 package com.mysite.sbb.question;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.Value;
 import org.springframework.ui.Model;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -38,18 +41,32 @@ public class QuestionController {
     }
 
     @GetMapping("/create")
-    public String questionCreate() {
+    public String questionCreate(QuestionForm questionForm) {
         return "question_form";
     }
 
-    // 메서드 오버라이딩이라 가능함.
-    // 화면에 입력한 "제목"과 "내용"을 매개변수로.
+    //    // 메서드 오버라이딩이라 가능함.
+//    // 화면에 입력한 "제목"과 "내용"을 매개변수로.
+//    @PostMapping("/create")
+//    public String questionCreate(@RequestParam String subject,
+//                                 @RequestParam String content) {
+//        // 질문 저장
+//        this.questionService.create(subject, content);
+//        // 질문 저장 이후 질문목록으로 리다이렉트
+//        return "redirect:/question/list";
+//    }
     @PostMapping("/create")
-    public String questionCreate(@RequestParam String subject,
-                                 @RequestParam String content) {
-        // 질문 저장
-        this.questionService.create(subject, content);
-        // 질문 저장 이후 질문목록으로 리다이렉트
+    // form에서 subject, content 속성이 있으므로
+    // 자동으로 바인딩이 됨(스프링의 binding 기능)
+    public String questionCreate(@Valid QuestionForm questionForm,
+                                 BindingResult bindingResult) {
+        // 오류 있는 경우엔
+        if (bindingResult.hasErrors()) {
+            // 다시 폼 작성하도록 함
+            return "question_form";
+        }
+        this.questionService.create(questionForm.getSubject(),
+                                    questionForm.getContent());
         return "redirect:/question/list";
     }
 }
