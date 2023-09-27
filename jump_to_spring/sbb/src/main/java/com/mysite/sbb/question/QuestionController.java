@@ -1,8 +1,10 @@
 package com.mysite.sbb.question;
 
+import com.mysite.sbb.answer.AnswerForm;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
+import org.springframework.data.domain.Page;
 import org.springframework.ui.Model;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -22,11 +24,12 @@ public class QuestionController {
     // 클래스 annot.에서 RequestMapping 썼으므로 이렇게 가능
     @GetMapping("/list")
 //    @ResponseBody
-    public String list(Model model) {
-        List<Question> questionList = this.questionService.getList();
+    public String list(Model model,
+                       @RequestParam(value = "page", defaultValue = "0") int page) {
+        Page<Question> paging = this.questionService.getList(page);
         // Model 객체는 자바 Class와 Template 간의 연결고리 역할
         // 즉, Model 객체에 값 담아두면 템플릿에서도 그 값 사용가능
-        model.addAttribute("questionList", questionList);
+        model.addAttribute("paging", paging);
         return "question_list";
     }
 
@@ -34,7 +37,8 @@ public class QuestionController {
     // 클래스 annot.에서 RequestMapping 썼으므로 이렇게 가능
     @GetMapping(value = "/detail/{id}")
     public String detail(Model model,
-                         @PathVariable("id") Integer id) {
+                         @PathVariable("id") Integer id,
+                         AnswerForm answerForm) {
         Question question = this.questionService.getQuestion(id);
         model.addAttribute("question", question);
         return "question_detail";
